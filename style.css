@@ -1,0 +1,296 @@
+:root {
+    --bg-color: #1e1e1e;
+    --card-bg-color: #2a2a2a;
+    --text-color: #e0e0e0;
+    --accent-color: #4caf50; /* Grønn aksent */
+    --accent-color-hover: #66bb6a;
+    --border-color: #444;
+    --input-bg-color: #333;
+    --button-bg-color: #3a3a3a;
+    --button-hover-bg-color: #4a4a4a;
+    --disabled-color: #777;
+    --cooperate-color: #64b5f6; /* Blå for samarbeid */
+    --defect-color: #e57373;   /* Rød for svik */
+    --noise-color: #ffb74d; /* Oransje for støy */
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    margin: 0;
+    padding: 20px;
+    line-height: 1.6;
+}
+
+.container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 15px;
+}
+
+h1, h2, h3 {
+    color: var(--accent-color);
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 5px;
+    margin-bottom: 15px;
+}
+
+h1 {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.card {
+    background-color: var(--card-bg-color);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 25px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+}
+
+/* --- Konfigurasjon --- */
+.config-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 25px;
+}
+
+.player-config, .game-settings {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+label {
+    font-weight: bold;
+    margin-bottom: -5px; /* Litt tettere på input */
+}
+
+select, input[type="number"], input[type="text"] {
+    background-color: var(--input-bg-color);
+    color: var(--text-color);
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    padding: 8px 10px;
+    width: 100%;
+    box-sizing: border-box; /* Inkluder padding/border i bredden */
+}
+
+select:focus, input:focus {
+    outline: none;
+    border-color: var(--accent-color);
+    box-shadow: 0 0 5px var(--accent-color);
+}
+
+.noise-control {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+#noise-level {
+    flex-grow: 1;
+    cursor: pointer;
+}
+#noise-value {
+    min-width: 35px; /* Forhindrer hopping */
+    text-align: right;
+}
+
+button {
+    background-color: var(--button-bg-color);
+    color: var(--text-color);
+    border: 1px solid var(--border-color);
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.2s ease, border-color 0.2s ease;
+    font-size: 1em;
+}
+
+button:hover:not(:disabled) {
+    background-color: var(--button-hover-bg-color);
+    border-color: #666;
+}
+
+button:disabled {
+    background-color: #2f2f2f;
+    color: var(--disabled-color);
+    cursor: not-allowed;
+    border-color: #444;
+}
+
+#start-game-btn {
+    background-color: var(--accent-color);
+    font-weight: bold;
+}
+#start-game-btn:hover:not(:disabled) {
+    background-color: var(--accent-color-hover);
+}
+
+/* --- Agentbygger --- */
+.builder-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+    align-items: end; /* Justerer knappen pent */
+}
+
+#add-agent-btn {
+    grid-column: 1 / -1; /* Lar knappen ta full bredde på mindre skjermer */
+    max-width: 200px; /* Begrenser bredde på større skjermer */
+    margin-top: 10px;
+}
+
+/* --- Spillseksjon --- */
+.game-info {
+    margin-bottom: 20px;
+}
+.game-info p {
+    margin: 5px 0;
+}
+
+.scores {
+    display: flex;
+    justify-content: space-around;
+    margin-top: 15px;
+    padding: 10px;
+    background-color: #333;
+    border-radius: 5px;
+}
+.scores div {
+    text-align: center;
+}
+
+.human-controls {
+    background-color: #383838;
+    padding: 15px;
+    border-radius: 5px;
+    margin: 15px 0;
+    text-align: center;
+}
+.human-controls p {
+    margin-bottom: 10px;
+}
+.human-controls button {
+    margin: 0 10px;
+    padding: 10px 20px;
+}
+#human-cooperate-btn {
+    background-color: var(--cooperate-color);
+    border-color: #5a9bd6;
+}
+#human-cooperate-btn:hover {
+    background-color: #82c3f8;
+}
+#human-defect-btn {
+    background-color: var(--defect-color);
+     border-color: #d46a6a;
+}
+#human-defect-btn:hover {
+    background-color: #f08a8a;
+}
+
+
+.game-controls {
+    margin-top: 20px;
+    margin-bottom: 20px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+#history-log {
+    background-color: var(--input-bg-color);
+    border: 1px solid var(--border-color);
+    border-radius: 5px;
+    padding: 15px;
+    height: 250px; /* Begrenset høyde med scroll */
+    overflow-y: auto;
+    font-family: 'Courier New', Courier, monospace; /* Monospace for bedre justering */
+    font-size: 0.9em;
+}
+.history-entry {
+    margin-bottom: 8px;
+    padding-bottom: 5px;
+    border-bottom: 1px dashed #444;
+    white-space: pre; /* Bevarer whitespace for justering */
+}
+.history-entry:last-child {
+    border-bottom: none;
+}
+.choice-C { color: var(--cooperate-color); font-weight: bold; }
+.choice-D { color: var(--defect-color); font-weight: bold; }
+.noise-indicator { color: var(--noise-color); font-style: italic; }
+
+
+/* --- Turnering --- */
+.tournament-setup {
+    margin-bottom: 20px;
+}
+#tournament-agent-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 10px;
+    margin-bottom: 15px;
+    max-height: 200px;
+    overflow-y: auto;
+    padding: 10px;
+    border: 1px solid var(--border-color);
+    background-color: var(--input-bg-color);
+    border-radius: 5px;
+}
+.tournament-agent-item label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    font-weight: normal; /* Normal vekt for labels her */
+}
+.tournament-agent-item input[type="checkbox"] {
+    width: auto; /* Ikke 100% bredde */
+    cursor: pointer;
+}
+
+.status-message {
+    font-style: italic;
+    color: var(--accent-color);
+    min-height: 1.6em; /* Unngå hopping når tekst vises/skjules */
+}
+
+
+#tournament-results table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+}
+
+#tournament-results th,
+#tournament-results td {
+    border: 1px solid var(--border-color);
+    padding: 8px 12px;
+    text-align: left;
+}
+
+#tournament-results th {
+    background-color: #333;
+    color: var(--accent-color);
+}
+
+#tournament-results tbody tr:nth-child(odd) {
+    background-color: var(--card-bg-color);
+}
+#tournament-results tbody tr:nth-child(even) {
+    background-color: #303030;
+}
+#tournament-results td:nth-child(1), /* Rank */
+#tournament-results td:nth-child(3) { /* Score */
+    text-align: center;
+}
+
+
+/* --- Hjelpeklasser --- */
+.hidden {
+    display: none !important; /* Viktig for å overstyre andre display-regler */
+}
