@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dilemma Lab v3</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Dilemma Lab: Iterated Prisoner's Dilemma</h1>
+
+        <!-- Konfigurasjonsseksjon -->
+        <section id="config-section" class="card">
+            <h2>Konfigurasjon</h2>
+            <div class="config-grid">
+                <!-- Spiller 1 -->
+                <div class="player-config">
+                    <h3>Spiller 1</h3>
+                    <label for="p1-type">Type:</label>
+                    <select id="p1-type">
+                        <option value="human">Menneske</option>
+                        <option value="ai" selected>AI</option>
+                    </select>
+                    <label for="p1-strategy">AI Strategi:</label>
+                    <select id="p1-strategy" disabled>
+                        <!-- Strategier lastes inn av JS -->
+                    </select>
+                </div>
+
+                <!-- Spiller 2 -->
+                <div class="player-config">
+                    <h3>Spiller 2</h3>
+                    <label for="p2-type">Type:</label>
+                    <select id="p2-type">
+                        <option value="human">Menneske</option>
+                        <option value="ai" selected>AI</option>
+                    </select>
+                    <label for="p2-strategy">AI Strategi:</label>
+                    <select id="p2-strategy" disabled>
+                        <!-- Strategier lastes inn av JS -->
+                    </select>
+                </div>
+
+                <!-- Spillinnstillinger -->
+                <div class="game-settings">
+                    <h3>Innstillinger</h3>
+                    <label for="max-rounds">Maks Runder:</label>
+                    <input type="number" id="max-rounds" value="200" min="1" max="1000">
+                    <label for="noise-level">Støy (0-50%):</label>
+                    <div class="noise-control">
+                         <input type="range" id="noise-level" value="0" min="0" max="50" step="1">
+                         <span id="noise-value">0%</span>
+                    </div>
+                    <button id="start-game-btn">Start Nytt Spill</button>
+                    <button id="reset-all-btn">Tilbakestill Alt</button>
+                 </div>
+            </div>
+        </section>
+
+        <!-- Agentbyggerseksjon -->
+        <section id="agent-builder-section" class="card">
+            <h2>Bygg Egendefinert Agent</h2>
+            <div class="builder-grid">
+                <div>
+                    <label for="agent-name">Agent Navn:</label>
+                    <input type="text" id="agent-name" placeholder="F.eks. MinStrategi">
+                </div>
+                <div>
+                    <label for="agent-first-move">Første Trekk:</label>
+                    <select id="agent-first-move">
+                        <option value="C">Samarbeid (C)</option>
+                        <option value="D">Svik (D)</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="agent-after-cooperate">Etter Motstander Samarbeidet:</label>
+                    <select id="agent-after-cooperate">
+                        <option value="C">Samarbeid (C)</option>
+                        <option value="D">Svik (D)</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="agent-after-defect">Etter Motstander Sveik:</label>
+                    <select id="agent-after-defect">
+                        <option value="C">Samarbeid (C)</option>
+                        <option value="D">Svik (D)</option>
+                    </select>
+                </div>
+                <button id="add-agent-btn">Legg til Agent</button>
+            </div>
+        </section>
+
+        <!-- Spillseksjon (vises etter start) -->
+        <section id="game-section" class="card hidden">
+            <h2>Spill Pågår</h2>
+            <div class="game-info">
+                <p>Runde: <span id="current-round">0</span> / <span id="total-rounds">200</span></p>
+                <p>Støy: <span id="current-noise">0%</span></p>
+                <div class="scores">
+                    <div>
+                        <strong>Spiller 1 (<span id="p1-name-display">AI</span>: <span id="p1-strategy-display">?</span>)</strong><br>
+                        Poeng: <span id="p1-score">0</span><br>
+                        Gj.snitt: <span id="p1-avg-score">0.00</span>
+                    </div>
+                     <div>
+                        <strong>Spiller 2 (<span id="p2-name-display">AI</span>: <span id="p2-strategy-display">?</span>)</strong><br>
+                        Poeng: <span id="p2-score">0</span><br>
+                        Gj.snitt: <span id="p2-avg-score">0.00</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Menneskelig Input (vises kun når nødvendig) -->
+            <div id="human-input-area" class="hidden human-controls">
+                <p><strong>Din tur (<span id="human-player-name">Spiller X</span>):</strong> Velg ditt trekk:</p>
+                <button id="human-cooperate-btn">Samarbeid (C)</button>
+                <button id="human-defect-btn">Svik (D)</button>
+            </div>
+
+            <!-- Spillkontroller -->
+            <div class="game-controls">
+                 <button id="step-btn" disabled>Spill 1 Trekk</button>
+                 <button id="step-10-btn" disabled>Spill 10 Trekk</button>
+                 <button id="step-100-btn" disabled>Spill 100 Trekk</button>
+                 <button id="run-rest-btn" disabled>Kjør Resten</button>
+                 <button id="stop-btn" disabled>Stopp</button>
+             </div>
+
+            <!-- Spillhistorikk -->
+            <h3>Historikk (Siste 20 trekk)</h3>
+            <div id="history-log">
+                <!-- Historikk legges til av JS -->
+            </div>
+        </section>
+
+        <!-- Turneringsseksjon -->
+        <section id="tournament-section" class="card">
+            <h2>Turnering</h2>
+            <div class="tournament-setup">
+                 <p>Velg agenter som skal delta (minst 2):</p>
+                 <div id="tournament-agent-list">
+                     <!-- Agenter listes opp her av JS -->
+                 </div>
+                 <button id="run-tournament-btn" disabled>Kjør Turnering</button>
+                 <p id="tournament-status" class="status-message"></p>
+            </div>
+            <div id="tournament-results" class="hidden">
+                 <h3>Turneringsresultater</h3>
+                 <table>
+                     <thead>
+                         <tr>
+                             <th>Rank</th>
+                             <th>Agent</th>
+                             <th>Gj.snitt Poeng/Runde</th>
+                         </tr>
+                     </thead>
+                     <tbody id="tournament-results-body">
+                         <!-- Resultater legges til her av JS -->
+                     </tbody>
+                 </table>
+             </div>
+         </section>
+
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
